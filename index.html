@@ -134,7 +134,7 @@ header {
 <div class="cart">
   <h3>ملخص الطلب</h3>
   <div id="summary">لا يوجد طلب</div>
-  <h3 id="grandTotal">الإجمالي: 0 ريال</h3>
+  <h3 id="grandTotal"> الإجمالي: 0 ريال </h3>
 
   <button class="order-btn" onclick="sendOrder()">إرسال الطلب واتساب</button>
 </div>
@@ -170,7 +170,7 @@ function updateCart(){
   });
 
   document.getElementById("summary").innerHTML = summary || "لا يوجد طلب";
-  document.getElementById("grandTotal").innerText = "الإجمالي: " + total + " ريال";
+  document.getElementById("grandTotal").innerText = " الإجمالي: " + total + " ريال";
 }
 
 function sendOrder(){
@@ -190,7 +190,7 @@ function sendOrder(){
     return;
   }
 
-  text += `الإجمالي: ${total} ريال`;
+  text += `الإجمالي : ${total} ريال`;
 
   let url = `https://wa.me/966501605090?text=${encodeURIComponent(text)}`;
   window.open(url, '_blank');

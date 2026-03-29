@@ -1,275 +1,200 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر العطور الفاخرة</title>
-    <style>
-        :root {
-            --gold: #d4af37;
-            --dark-bg: #121212;
-            --card-bg: #1e1e1e;
-            --white: #ffffff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طلب عطور</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--white);
-            margin: 0;
-            padding-bottom: 120px; /* مساحة للسلة المثبتة */
-        }
+<style>
+body {
+  font-family: Arial;
+  direction: rtl;
+  background: #111;
+  color: #fff;
+  margin: 0;
+}
 
-        header {
-            text-align: center;
-            padding: 30px 20px;
-            background: linear-gradient(to bottom, #000, var(--dark-bg));
-            border-bottom: 1px solid var(--gold);
-        }
+header {
+  text-align: center; 
+  padding: 20px;
+  background: #000;
+  font-size: 20px;
+}
 
-        header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--gold);
-            letter-spacing: 1px;
-        }
+.container {
+  padding: 15px;
+}
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 15px;
-        }
+.product {
+  background: #1c1c1c;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  padding: 10px;
+}
 
-        .product {
-            background: var(--card-bg);
-            border-radius: 15px;
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #333;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+.product img {
+  width: 100%;
+  border-radius: 10px;
+  height: 200px;
+  object-fit: cover;
+}
 
-        .product:hover {
-            border-color: var(--gold);
-            transform: translateY(-3px);
-        }
+.price {
+  color: gold;
+}
 
-        .product img {
-            width: 100%;
-            height: 250px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-bottom: 15px;
-        }
+.quantity {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
 
-        .product h3 {
-            margin: 10px 0;
-            font-size: 18px;
-        }
+.quantity button {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
 
-        .price {
-            color: var(--gold);
-            font-weight: bold;
-            font-size: 20px;
-            margin-bottom: 15px;
-        }
+.cart {
+  background: #000;
+  padding: 15px;
+  border-top: 2px solid gold;
+}
 
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: #2a2a2a;
-            padding: 5px 15px;
-            border-radius: 30px;
-        }
+.order-btn {
+  background: #25D366;
+  color: #fff;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+}
+</style>
 
-        .quantity-controls button {
-            background: none;
-            border: none;
-            color: var(--gold);
-            font-size: 24px;
-            cursor: pointer;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quantity-controls span {
-            font-size: 18px;
-            min-width: 20px;
-            text-align: center;
-        }
-
-        /* حقول بيانات العميل */
-        .customer-info {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            border: 1px dashed var(--gold);
-        }
-
-        .customer-info input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 8px;
-            color: white;
-            box-sizing: border-box;
-        }
-
-        /* السلة المثبتة في الأسفل */
-        .cart-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #000;
-            padding: 15px 20px;
-            border-top: 2px solid var(--gold);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
-            z-index: 1000;
-        }
-
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .order-btn {
-            background: #25D366;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .order-btn:hover {
-            background: #1eb954;
-            transform: scale(1.02);
-        }
-    </style>
 </head>
+
 <body>
 
-<header>
-    <h1>⚜️ متجر النخبة للعطور</h1>
-</header>
+<header>طلب العطور</header>
 
 <div class="container">
-    <div id="products-list"></div>
 
-    <div class="customer-info">
-        <h3>📍 بيانات التوصيل</h3>
-        <input type="text" id="custName" placeholder="الاسم الكامل">
-        <input type="text" id="custAddress" placeholder="المدينة / الحي">
-    </div>
+<div class="product">
+  <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad">
+  <h3>عطر فاخر</h3>
+  <p class="price">120 ريال</p>
+
+  <div class="quantity">
+    <button onclick="change(0,-1)">-</button>
+    <span id="q0">0</span>
+    <button onclick="change(0,1)">+</button>
+  </div>
 </div>
 
-<div class="cart-footer">
-    <div class="total-row">
-        <span>الإجمالي النهائي:</span>
-        <span id="grandTotal" style="color: var(--gold); font-size: 22px; font-weight: bold;">0 ريال</span>
-    </div>
-    <button class="order-btn" onclick="sendOrder()">إتمام الطلب عبر واتساب ✅</button>
+<div class="product">
+  <img src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd">
+  <h3>عطر نسائي مميز</h3>
+  <p class="price">150 ريال</p>
+
+  <div class="quantity">
+    <button onclick="change(1,-1)">-</button>
+    <span id="q1">0</span>
+    <button onclick="change(1,1)">+</button>
+  </div>
+</div>
+
+<div class="product">
+  <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f">
+  <h3>عطر شرقي</h3>
+  <p class="price">180 ريال</p>
+
+  <div class="quantity">
+    <button onclick="change(2,-1)">-</button>
+    <span id="q2">0</span>
+    <button onclick="change(2,1)">+</button>
+  </div>
+</div>
+
+<div class="product">
+  <img src="https://images.unsplash.com/photo-1600180758890-6c3b1d0f84a0">
+  <h3>عطر كلاسيك</h3>
+  <p class="price">200 ريال</p>
+
+  <div class="quantity">
+    <button onclick="change(3,-1)">-</button>
+    <span id="q3">0</span>
+    <button onclick="change(3,1)">+</button>
+  </div>
+</div>
+
+</div>
+
+<div class="cart">
+  <h3>ملخص الطلب</h3>
+  <div id="summary">لا يوجد طلب</div>
+  <h3 id="grandTotal">الإجمالي: 0 ريال</h3>
+
+  <button class="order-btn" onclick="sendOrder()">إرسال الطلب واتساب</button>
 </div>
 
 <script>
-    const products = [
-        { id: 0, name: "عطر رجالي فاخر", price: 120, img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400" },
-        { id: 1, name: "عطر نسائي مميز", price: 150, img: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400" },
-        { id: 2, name: "عطر شرقي فاخر", price: 180, img: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
-        { id: 3, name: "عطر كلاسيك فاخر", price: 200, img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" }
-    ];
+let products = [
+  {name:"عطر فاخر", price:120},
+  {name:"عطر نسائي مميز", price:150},
+  {name:"عطر شرقي", price:180},
+  {name:"عطر كلاسيك", price:200}
+];
 
-    let cart = {};
+let qty = [0,0,0,0];
 
-    function renderProducts() {
-        const list = document.getElementById('products-list');
-        list.innerHTML = products.map(p => `
-            <div class="product">
-                <img src="${p.img}" alt="${p.name}">
-                <h3>${p.name}</h3>
-                <div class="price">${p.price} ريال</div>
-                <div class="quantity-controls">
-                    <button onclick="updateQty(${p.id}, -1)">−</button>
-                    <span id="qty-${p.id}">0</span>
-                    <button onclick="updateQty(${p.id}, 1)">+</button>
-                </div>
-            </div>
-        `).join('');
+function change(index, val){
+  qty[index] += val;
+  if(qty[index] < 0) qty[index] = 0;
+
+  document.getElementById("q"+index).innerText = qty[index];
+  updateCart();
+}
+
+function updateCart(){
+  let summary = "";
+  let total = 0;
+
+  products.forEach((p,i)=>{
+    if(qty[i] > 0){
+      let sub = qty[i] * p.price;
+      total += sub;
+      summary += `${p.name} × ${qty[i]} = ${sub} ريال<br>`;
     }
+  });
 
-    function updateQty(id, change) {
-        if (!cart[id]) cart[id] = 0;
-        cart[id] += change;
-        if (cart[id] < 0) cart[id] = 0;
-        
-        document.getElementById(`qty-${id}`).innerText = cart[id];
-        calculateTotal();
+  document.getElementById("summary").innerHTML = summary || "لا يوجد طلب";
+  document.getElementById("grandTotal").innerText = "الإجمالي: " + total + " ريال";
+}
+
+function sendOrder(){
+  let text = "طلب جديد:";
+  let total = 0;
+
+  products.forEach((p,i)=>{
+    if(qty[i] > 0){
+      let sub = qty[i] * p.price;
+      total += sub;
+      text += `${p.name} × ${qty[i]} = ${sub} ريال`;
     }
+  });
 
-    function calculateTotal() {
-        let total = 0;
-        products.forEach(p => {
-            if (cart[p.id]) total += cart[p.id] * p.price;
-        });
-        document.getElementById('grandTotal').innerText = total + " ريال";
-        return total;
-    }
+  if(total === 0){
+    alert("اختر منتج أولاً");
+    return;
+  }
 
-    function sendOrder() {
-        const name = document.getElementById('custName').value;
-        const address = document.getElementById('custAddress').value;
-        let total = calculateTotal();
+  text += `\\nالإجمالي: ${total} ريال`;
 
-        if (total === 0) {
-            alert("يرجى اختيار عطر واحد على الأقل");
-            return;
-        }
-        if (!name || !address) {
-            alert("يرجى كتابة الاسم والعنوان لتسهيل التوصيل");
-            return;
-        }
-
-        let message = `*طلب جديد من المتجر* 🛍️\n\n`;
-        message += `*الاسم:* ${name}\n`;
-        message += `*العنوان:* ${address}\n`;
-        message += `--------------------------\n`;
-
-        products.forEach(p => {
-            if (cart[p.id] > 0) {
-                message += `• ${p.name} (${cart[p.id]} حبة)\n`;
-            }
-        });
-
-        message += `--------------------------\n`;
-        message += `*الإجمالي النهائي:* ${total} ريال 💰`;
-
-        const whatsappNumber = "966501605090";
-        const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-    }
-
-    // تشغيل الدالة عند تحميل الصفحة
-    renderProducts();
+  let url = `https://wa.me/966501605090?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
 </script>
 
 </body>

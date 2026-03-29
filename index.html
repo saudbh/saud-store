@@ -190,7 +190,7 @@ function sendOrder(){
     return;
   }
 
-  text += `\\nالإجمالي: ${total} ريال`;
+  text += `الإجمالي: ${total} ريال`;
 
   let url = `https://wa.me/966501605090?text=${encodeURIComponent(text)}`;
   window.open(url, '_blank');

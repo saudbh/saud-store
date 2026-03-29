@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طلب عطور</title>
+
+<style>
+body {
+  font-family: Arial;
+  direction: rtl;
+  background: #111;
+  color: #fff;
+  margin: 0;
+}
+
+header {
+  text-align: center; 
+  padding: 20px;
+  background: #000;
+  font-size: 20px;
+}
+
+.container {
+  padding: 15px;
+}
+
+.product {
+  background: #1c1c1c;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  padding: 10px;
+}
+
+.product img {
+  width: 100%;
+  border-radius: 10px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.price {
+  color: gold;
+}
+
+.quantity {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.quantity button {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.cart {
+  background: #000;
+  padding: 15px;
+  border-top: 2px solid gold;
+}
+
+.order-btn {
+  background: #25D366;
+  color: #fff;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>طلب العطور</header>
+
+<div class="container">
+
+<div class="product">
+  <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad">
+  <h3>عطر فاخر</h3>
+  <p class="price">120 ريال</p>
+
+  <div class="quantity">
+    <button onclick="change(0,-1)">-</button>
+    <span id="q0">0</span>
+    <button onclick="change(0,1)">+</button>
+  </div>
+</div>
+
+<div class="product">
+  <img src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd">
+  <h3>عطر نسائي مميز</h3>
+  <p class="price">150 ريال</p>
+
+  <div class="quantity">
+    <button onclick="change(1,-1)">-</button>
+    <span id="q1">0</span>
+    <button onclick="change(1,1)">+</button>
+  </div>
+</div>
+
+<div class="product">
+  <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f">
+  <h3>عطر شرقي</h3>
+  <p class="price">180 ريال</p>
+
+  <div class="quantity">
+    <button onclick="change(2,-1)">-</button>
+    <span id="q2">0</span>
+    <button onclick="change(2,1)">+</button>
+  </div>
+</div>
+
+<div class="product">
+  <img src="https://images.unsplash.com/photo-1600180758890-6c3b1d0f84a0">
+  <h3>عطر كلاسيك</h3>
+  <p class="price">200 ريال</p>
+
+  <div class="quantity">
+    <button onclick="change(3,-1)">-</button>
+    <span id="q3">0</span>
+    <button onclick="change(3,1)">+</button>
+  </div>
+</div>
+
+</div>
+
+<div class="cart">
+  <h3>ملخص الطلب</h3>
+  <div id="summary">لا يوجد طلب</div>
+  <h3 id="grandTotal">الإجمالي: 0 ريال</h3>
+
+  <button class="order-btn" onclick="sendOrder()">إرسال الطلب واتساب</button>
+</div>
+
+<script>
+let products = [
+  {name:"عطر فاخر", price:120},
+  {name:"عطر نسائي مميز", price:150},
+  {name:"عطر شرقي", price:180},
+  {name:"عطر كلاسيك", price:200}
+];
+
+let qty = [0,0,0,0];
+
+function change(index, val){
+  qty[index] += val;
+  if(qty[index] < 0) qty[index] = 0;
+
+  document.getElementById("q"+index).innerText = qty[index];
+  updateCart();
+}
+
+function updateCart(){
+  let summary = "";
+  let total = 0;
+
+  products.forEach((p,i)=>{
+    if(qty[i] > 0){
+      let sub = qty[i] * p.price;
+      total += sub;
+      summary += `${p.name} × ${qty[i]} = ${sub} ريال<br>`;
+    }
+  });
+
+  document.getElementById("summary").innerHTML = summary || "لا يوجد طلب";
+  document.getElementById("grandTotal").innerText = "الإجمالي: " + total + " ريال";
+}
+
+function sendOrder(){
+  let text = "طلب جديد:\\n";
+  let total = 0;
+
+  products.forEach((p,i)=>{
+    if(qty[i] > 0){
+      let sub = qty[i] * p.price;
+      total += sub;
+      text += `${p.name} × ${qty[i]} = ${sub} ريال\\n`;
+    }
+  });
+
+  if(total === 0){
+    alert("اختر منتج أولاً");
+    return;
+  }
+
+  text += `\\nالإجمالي: ${total} ريال`;
+
+  let url = `https://wa.me/966501605090?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>

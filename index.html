@@ -43,7 +43,7 @@
   .max-box .line span:first-child{color:#888}
   .max-box .line span:last-child{color:#1a1a1a}
   #err{font-size:13px;color:#dc2626;margin-bottom:8px;text-align:center}
-  .info-bar{font-size:12px;color:#aaa;margin-top:8px}
+  .info-bar{font-size:12px;color:#aaa;margin-top:8px;line-height:1.7}
   .divider{border:none;border-top:1px solid #f0f0f0;margin:10px 0}
   @media(max-width:480px){.max-grid{grid-template-columns:1fr}}
 </style>
@@ -153,12 +153,12 @@ document.getElementById('bal').addEventListener('input',function(){
 function scheduleChanged(){
   const val=document.getElementById('schedule').value.split(',').map(Number);
   WS=val[0]; WE=val[1];
-  ML=Math.round((WS+WE)/2); EL=ML;
-  const dur=((WE-WS)/60).toFixed(1).replace('.0','');
-  document.getElementById('info-bar').textContent=
+  ML=WS+180;  // أقصى تأخر = وقت الحضور + 3 ساعات
+  EL=WE-240;  // أبكر انصراف = وقت الانصراف - 4 ساعات
+  document.getElementById('info-bar').innerHTML=
     'الدوام: '+toT(WS)+' – '+toT(WE)+
-    '  |  أقصى تأخر / أبكر انصراف: '+toT(ML)+
-    '  |  مدة الدوام: '+dur+' ساعات';
+    '&nbsp; | &nbsp;أقصى حضور متأخر: '+toT(ML)+
+    '&nbsp; | &nbsp;أبكر انصراف: '+toT(EL);
   ids.forEach(i=>{if(document.getElementById('d'+i)) chMins(i);});
   document.getElementById('out').style.display='none';
 }
@@ -214,21 +214,19 @@ function chMins(i){
 
 function calc(){
   const bal=parseInt(document.getElementById('bal').value)||0;
-  let total=0, hasErr=false, count=0;
+  let total=0,hasErr=false,count=0;
   document.getElementById('err').textContent='';
-
   for(const i of ids){
     if(!document.getElementById('d'+i)) continue;
     const m=chMins(i);
     if(m===-1){hasErr=true;continue;}
     total+=m; count++;
   }
-
   if(hasErr){document.getElementById('err').textContent='تحقق من الأوقات';return;}
 
   const rem=Math.max(0,bal-total);
-  const maxLate=ML-WS;
-  const maxEarly=WE-EL;
+  const maxLate=ML-WS;   // 180 د
+  const maxEarly=WE-EL;  // 240 د
 
   document.getElementById('v-used').textContent=total;
   document.getElementById('v-rem').textContent=bal-total;

@@ -39,10 +39,8 @@
   .max-box .line span:first-child{color:#888}
   .max-box .line span:last-child{color:#1a1a1a}
   #err{font-size:13px;color:#dc2626;margin-bottom:8px;text-align:center}
-  @media(max-width:480px){
-    .max-grid{grid-template-columns:1fr}
-    .stat{grid-template-columns:repeat(3,1fr)}
-  }
+  .info-bar{font-size:12px;color:#aaa;margin-top:6px}
+  @media(max-width:480px){.max-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -54,7 +52,19 @@
       <label>الرصيد (دقيقة)</label>
       <input type="number" id="bal" value="700" min="0" style="width:90px">
     </div>
-    <div style="font-size:12px;color:#aaa;margin-top:4px">الدوام: 7:30 – 14:30 &nbsp;|&nbsp; أقصى تأخر/أبكر انصراف: 10:30</div>
+    <div class="row">
+      <label>وقت الدوام</label>
+      <select id="schedule" onchange="scheduleChanged()" style="flex:1">
+        <option value="390,810">6:30 – 13:30</option>
+        <option value="420,840">7:00 – 14:00</option>
+        <option value="450,870" selected>7:30 – 14:30</option>
+        <option value="480,900">8:00 – 15:00</option>
+        <option value="510,930">8:30 – 15:30</option>
+        <option value="540,960">9:00 – 16:00</option>
+        <option value="570,990">9:30 – 16:30</option>
+      </select>
+    </div>
+    <div class="info-bar" id="info-bar"></div>
   </div>
 
   <div class="card">
@@ -81,13 +91,13 @@
     <div class="max-grid">
       <div class="max-box">
         <div class="title">أقصى استفادة — حضور متأخر</div>
-        <div class="line"><span>أقصى تأخر/يوم</span><span>180 د (حتى 10:30)</span></div>
+        <div class="line"><span>أقصى تأخر/يوم</span><span id="ml-max">-</span></div>
         <div class="line"><span>عدد الأيام</span><span id="ml-days">-</span></div>
         <div class="line"><span>يوم جزئي</span><span id="ml-part">-</span></div>
       </div>
       <div class="max-box">
         <div class="title">أقصى استفادة — انصراف مبكر</div>
-        <div class="line"><span>أقصى خروج/يوم</span><span>240 د (من 10:30)</span></div>
+        <div class="line"><span>أقصى خروج/يوم</span><span id="me-max">-</span></div>
         <div class="line"><span>عدد الأيام</span><span id="me-days">-</span></div>
         <div class="line"><span>يوم جزئي</span><span id="me-part">-</span></div>
       </div>
@@ -96,32 +106,53 @@
 </div>
 
 <script>
-const WS=450,WE=870,ML=630,EL=630;
-let n=0,ids=[];
+let WS=450, WE=870, ML=630, EL=630;
+let n=0, ids=[];
 
 function toM(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
 function toT(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
 
+function scheduleChanged(){
+  const val=document.getElementById('schedule').value.split(',').map(Number);
+  WS=val[0]; WE=val[1];
+  ML=Math.round((WS+WE)/2);
+  EL=ML;
+  const dur=((WE-WS)/60).toFixed(1).replace('.0','');
+  document.getElementById('info-bar').textContent=
+    'الدوام: '+toT(WS)+' – '+toT(WE)+
+    '  |  أقصى تأخر / أبكر انصراف: '+toT(ML)+
+    '  |  مدة الدوام: '+dur+' ساعات';
+  ids.forEach(i=>{if(document.getElementById('d'+i)) chMins(i);});
+  document.getElementById('out').style.display='none';
+}
+
 function addDay(){
-  n++;ids.push(n);
+  n++; ids.push(n);
   const c=document.getElementById('days');
   const d=document.createElement('div');
-  d.className='day-row';d.id='d'+n;
-  d.innerHTML=`<select id="tp${n}" onchange="chType(${n})"><option value="late">حضور متأخر</option><option value="early">انصراف مبكر</option></select><input type="time" id="t${n}" value="08:00" onchange="chMins(${n})"><span class="mins" id="m${n}">30 د</span><button class="del" onclick="del(${n})">×</button>`;
+  d.className='day-row'; d.id='d'+n;
+  d.innerHTML=
+    '<select id="tp'+n+'" onchange="chType('+n+')">'+
+      '<option value="late">حضور متأخر</option>'+
+      '<option value="early">انصراف مبكر</option>'+
+    '</select>'+
+    '<input type="time" id="t'+n+'" onchange="chMins('+n+')">'+
+    '<span class="mins" id="m'+n+'">-</span>'+
+    '<button class="del" onclick="del('+n+')">×</button>';
   c.appendChild(d);
   chType(n);
 }
 
 function del(i){
   const el=document.getElementById('d'+i);
-  if(el)el.remove();
+  if(el) el.remove();
   ids=ids.filter(x=>x!==i);
 }
 
 function chType(i){
   const tp=document.getElementById('tp'+i).value;
   const t=document.getElementById('t'+i);
-  t.value=tp==='late'?'08:00':'14:00';
+  t.value=tp==='late'?toT(WS+30):toT(WE-30);
   chMins(i);
 }
 
@@ -129,51 +160,60 @@ function chMins(i){
   const tp=document.getElementById('tp'+i).value;
   const tv=document.getElementById('t'+i).value;
   const el=document.getElementById('m'+i);
+  if(!tv){el.textContent='-';return -1;}
   const m=toM(tv);
   let mins=0,err='';
   if(tp==='late'){
-    if(m>ML)err='بعد 10:30';
-    else if(m<=WS)err='قبل الدوام';
+    if(m>ML) err='بعد '+toT(ML);
+    else if(m<=WS) err='قبل الدوام';
     else mins=m-WS;
-  }else{
-    if(m<EL)err='قبل 10:30';
-    else if(m>=WE)err='بعد الدوام';
+  } else {
+    if(m<EL) err='قبل '+toT(EL);
+    else if(m>=WE) err='بعد الدوام';
     else mins=WE-m;
   }
-  el.innerHTML=err?`<span class="err-txt">${err}</span>`:mins+' د';
+  el.innerHTML=err?'<span class="err-txt">'+err+'</span>':mins+' د';
   return err?-1:mins;
 }
 
 function calc(){
   const bal=parseInt(document.getElementById('bal').value)||700;
-  let total=0,rows=[],hasErr=false;
+  let total=0,hasErr=false,count=0;
   document.getElementById('err').textContent='';
   for(const i of ids){
-    if(!document.getElementById('d'+i))continue;
+    if(!document.getElementById('d'+i)) continue;
     const m=chMins(i);
     if(m===-1){hasErr=true;continue;}
-    total+=m;rows.push(i);
+    total+=m; count++;
   }
   if(hasErr){document.getElementById('err').textContent='تحقق من الأوقات';return;}
-  if(!rows.length){document.getElementById('err').textContent='أضف يوماً أولاً';return;}
+  if(!count){document.getElementById('err').textContent='أضف يوماً أولاً';return;}
 
   const rem=Math.max(0,bal-total);
+  const maxLate=ML-WS;
+  const maxEarly=WE-EL;
+
   document.getElementById('v-used').textContent=total;
   document.getElementById('v-rem').textContent=bal-total;
-  document.getElementById('v-days').textContent=rows.length;
+  document.getElementById('v-days').textContent=count;
   document.getElementById('sb-used').className='stat-box'+(total>bal?' bad':'');
   document.getElementById('sb-rem').className='stat-box'+(bal-total<0?' bad':bal-total<60?' warn':' ok');
 
-  const ld=Math.floor(rem/180),lr=rem%180;
-  const ed=Math.floor(rem/240),er=rem%240;
+  const ld=Math.floor(rem/maxLate), lr=rem%maxLate;
+  const ed=Math.floor(rem/maxEarly), er=rem%maxEarly;
+
+  document.getElementById('ml-max').textContent=maxLate+' د (حتى '+toT(ML)+')';
   document.getElementById('ml-days').textContent=ld+' يوم';
   document.getElementById('ml-part').textContent=lr>0?toT(WS+lr)+' ('+lr+' د)':'—';
+
+  document.getElementById('me-max').textContent=maxEarly+' د (من '+toT(EL)+')';
   document.getElementById('me-days').textContent=ed+' يوم';
   document.getElementById('me-part').textContent=er>0?toT(WE-er)+' ('+er+' د)':'—';
 
   document.getElementById('out').style.display='block';
 }
 
+scheduleChanged();
 addDay();
 </script>
 </body>

@@ -1,201 +1,180 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تجربة موقع طلب عطور</title>
-
+<title>حاسبة الاستئذان</title>
 <style>
-body {
-  font-family: Arial;
-  direction: rtl;
-  background: #111;
-  color: #fff;
-  margin: 0;
-}
-
-header {
-  text-align: center; 
-  padding: 20px;
-  background: #000;
-  font-size: 20px;
-}
-
-.container {
-  padding: 15px;
-}
-
-.product {
-  background: #1c1c1c;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  padding: 10px;
-}
-
-.product img {
-  width: 100%;
-  border-radius: 10px;
-  height: 200px;
-  object-fit: cover;
-}
-
-.price {
-  color: gold;
-}
-
-.quantity {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.quantity button {
-  width: 40px;
-  height: 40px;
-  font-size: 18px;
-}
-
-.cart {
-  background: #000;
-  padding: 15px;
-  border-top: 2px solid gold;
-}
-
-.order-btn {
-  background: #25D366;
-  color: #fff;
-  padding: 12px;
-  width: 100%;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,sans-serif;background:#f5f5f5;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem}
+  .wrap{width:100%;max-width:600px}
+  h1{font-size:20px;font-weight:600;color:#1a1a1a;margin-bottom:1.25rem;text-align:center}
+  .card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+  .row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .row label{font-size:14px;color:#666;min-width:130px}
+  select,input[type=time],input[type=number]{border:1px solid #d5d5d5;border-radius:8px;padding:6px 10px;font-size:14px;background:#fafafa;color:#1a1a1a;height:36px;font-family:inherit}
+  select:focus,input:focus{outline:2px solid #4f8ef7;border-color:transparent}
+  .section-title{font-size:13px;font-weight:600;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+  .col-h{font-size:12px;color:#aaa;text-align:center}
+  .day-row{display:grid;grid-template-columns:1fr 1fr 60px 28px;gap:8px;align-items:center;margin-bottom:8px}
+  .day-row select,.day-row input[type=time]{width:100%}
+  .mins{font-size:13px;font-weight:600;color:#2563eb;text-align:center}
+  .err-txt{font-size:12px;color:#dc2626;text-align:center}
+  button.add{border:none;background:none;color:#2563eb;font-size:14px;cursor:pointer;padding:4px 0;font-family:inherit}
+  button.add:hover{text-decoration:underline}
+  button.del{border:none;background:none;color:#bbb;font-size:20px;cursor:pointer;padding:0;line-height:1;font-family:inherit}
+  button.del:hover{color:#dc2626}
+  button.main{width:100%;border:1px solid #d5d5d5;border-radius:8px;background:#fff;color:#1a1a1a;padding:10px;font-size:15px;cursor:pointer;margin-bottom:1rem;font-family:inherit;font-weight:500}
+  button.main:hover{background:#f0f0f0}
+  .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+  .stat-box{background:#f5f5f5;border-radius:8px;padding:.85rem;text-align:center}
+  .stat-box .n{font-size:24px;font-weight:600;color:#1a1a1a}
+  .stat-box .l{font-size:12px;color:#888;margin-top:3px}
+  .ok .n{color:#16a34a} .warn .n{color:#d97706} .bad .n{color:#dc2626}
+  .max-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+  .max-box{background:#f5f5f5;border-radius:8px;padding:.85rem}
+  .max-box .title{font-size:13px;font-weight:600;color:#555;margin-bottom:8px}
+  .max-box .line{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid #e5e5e5}
+  .max-box .line:last-child{border-bottom:none;font-weight:600}
+  .max-box .line span:first-child{color:#888}
+  .max-box .line span:last-child{color:#1a1a1a}
+  #err{font-size:13px;color:#dc2626;margin-bottom:8px;text-align:center}
+  @media(max-width:480px){
+    .max-grid{grid-template-columns:1fr}
+    .stat{grid-template-columns:repeat(3,1fr)}
+  }
 </style>
-
 </head>
-
 <body>
+<div class="wrap">
+  <h1>حاسبة الاستئذان الشهري</h1>
 
-<header>طلب عطر عن طريق واتساب</header>
-
-<div class="container">
-
-<div class="product">
-  <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad">
-  <h3>عطر فاخر</h3>
-  <p class="price">120 ريال</p>
-
-  <div class="quantity">
-    <button onclick="change(0,-1)">-</button>
-    <span id="q0">0</span>
-    <button onclick="change(0,1)">+</button>
+  <div class="card">
+    <div class="row">
+      <label>الرصيد (دقيقة)</label>
+      <input type="number" id="bal" value="700" min="0" style="width:90px">
+    </div>
+    <div style="font-size:12px;color:#aaa;margin-top:4px">الدوام: 7:30 – 14:30 &nbsp;|&nbsp; أقصى تأخر/أبكر انصراف: 10:30</div>
   </div>
-</div>
 
-<div class="product">
-  <img src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd">
-  <h3>عطر نسائي مميز</h3>
-  <p class="price">150 ريال</p>
-
-  <div class="quantity">
-    <button onclick="change(1,-1)">-</button>
-    <span id="q1">0</span>
-    <button onclick="change(1,1)">+</button>
+  <div class="card">
+    <div class="section-title">أيام الاستئذان</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 60px 28px;gap:8px;margin-bottom:6px">
+      <div class="col-h">النوع</div>
+      <div class="col-h">الوقت</div>
+      <div class="col-h">دقائق</div>
+      <div></div>
+    </div>
+    <div id="days"></div>
+    <button class="add" onclick="addDay()">+ يوم جديد</button>
   </div>
-</div>
 
-<div class="product">
-  <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f">
-  <h3>عطر شرقي</h3>
-  <p class="price">180 ريال</p>
+  <div id="err"></div>
+  <button class="main" onclick="calc()">احسب</button>
 
-  <div class="quantity">
-    <button onclick="change(2,-1)">-</button>
-    <span id="q2">0</span>
-    <button onclick="change(2,1)">+</button>
+  <div id="out" style="display:none">
+    <div class="stat">
+      <div class="stat-box" id="sb-used"><div class="n" id="v-used">0</div><div class="l">مستخدم</div></div>
+      <div class="stat-box" id="sb-rem"><div class="n" id="v-rem">0</div><div class="l">متبقي</div></div>
+      <div class="stat-box"><div class="n" id="v-days">0</div><div class="l">أيام</div></div>
+    </div>
+    <div class="max-grid">
+      <div class="max-box">
+        <div class="title">أقصى استفادة — حضور متأخر</div>
+        <div class="line"><span>أقصى تأخر/يوم</span><span>180 د (حتى 10:30)</span></div>
+        <div class="line"><span>عدد الأيام</span><span id="ml-days">-</span></div>
+        <div class="line"><span>يوم جزئي</span><span id="ml-part">-</span></div>
+      </div>
+      <div class="max-box">
+        <div class="title">أقصى استفادة — انصراف مبكر</div>
+        <div class="line"><span>أقصى خروج/يوم</span><span>240 د (من 10:30)</span></div>
+        <div class="line"><span>عدد الأيام</span><span id="me-days">-</span></div>
+        <div class="line"><span>يوم جزئي</span><span id="me-part">-</span></div>
+      </div>
+    </div>
   </div>
-</div>
-
-<div class="product">
-  <img src="https://images.unsplash.com/photo-1600180758890-6c3b1d0f84a0">
-  <h3>عطر كلاسيك</h3>
-  <p class="price">200 ريال</p>
-
-  <div class="quantity">
-    <button onclick="change(3,-1)">-</button>
-    <span id="q3">0</span>
-    <button onclick="change(3,1)">+</button>
-  </div>
-</div>
-
-</div>
-
-<div class="cart">
-  <h3>ملخص الطلب</h3>
-  <div id="summary">لا يوجد طلب</div>
-  <h3 id="grandTotal"> الإجمالي: 0 ريال </h3>
-
-  <button class="order-btn" onclick="sendOrder()">إرسال الطلب واتساب</button>
 </div>
 
 <script>
-let products = [
-  {name:"عطر فاخر", price:120},
-  {name:"عطر نسائي مميز", price:150},
-  {name:"عطر شرقي", price:180},
-  {name:"عطر كلاسيك", price:200}
-];
+const WS=450,WE=870,ML=630,EL=630;
+let n=0,ids=[];
 
-let qty = [0,0,0,0];
+function toM(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
+function toT(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
 
-function change(index, val){
-  qty[index] += val;
-  if(qty[index] < 0) qty[index] = 0;
-
-  document.getElementById("q"+index).innerText = qty[index];
-  updateCart();
+function addDay(){
+  n++;ids.push(n);
+  const c=document.getElementById('days');
+  const d=document.createElement('div');
+  d.className='day-row';d.id='d'+n;
+  d.innerHTML=`<select id="tp${n}" onchange="chType(${n})"><option value="late">حضور متأخر</option><option value="early">انصراف مبكر</option></select><input type="time" id="t${n}" value="08:00" onchange="chMins(${n})"><span class="mins" id="m${n}">30 د</span><button class="del" onclick="del(${n})">×</button>`;
+  c.appendChild(d);
+  chType(n);
 }
 
-function updateCart(){
-  let summary = "";
-  let total = 0;
-
-  products.forEach((p,i)=>{
-    if(qty[i] > 0){
-      let sub = qty[i] * p.price;
-      total += sub;
-      summary += `${p.name} × ${qty[i]} = ${sub} ريال<br>`;
-    }
-  });
-
-  document.getElementById("summary").innerHTML = summary || "لا يوجد طلب";
-  document.getElementById("grandTotal").innerText = " الإجمالي: " + total + " ريال";
+function del(i){
+  const el=document.getElementById('d'+i);
+  if(el)el.remove();
+  ids=ids.filter(x=>x!==i);
 }
 
-function sendOrder(){
-  let text = ":::طلب جديد::::";
-  let total = 0;
+function chType(i){
+  const tp=document.getElementById('tp'+i).value;
+  const t=document.getElementById('t'+i);
+  t.value=tp==='late'?'08:00':'14:00';
+  chMins(i);
+}
 
-  products.forEach((p,i)=>{
-    if(qty[i] > 0){
-      let sub = qty[i] * p.price;
-      total += sub;
-      text += `${p.name} × ${qty[i]} = ${sub} ريال`;
-    }
-  });
-
-  if(total === 0){
-    alert("اختر منتج أولاً");
-    return;
+function chMins(i){
+  const tp=document.getElementById('tp'+i).value;
+  const tv=document.getElementById('t'+i).value;
+  const el=document.getElementById('m'+i);
+  const m=toM(tv);
+  let mins=0,err='';
+  if(tp==='late'){
+    if(m>ML)err='بعد 10:30';
+    else if(m<=WS)err='قبل الدوام';
+    else mins=m-WS;
+  }else{
+    if(m<EL)err='قبل 10:30';
+    else if(m>=WE)err='بعد الدوام';
+    else mins=WE-m;
   }
-
-  text += `الإجمالي : ${total} ريال`;
-
-  let url = `https://wa.me/966501605090?text=${encodeURIComponent(text)}`;
-  window.open(url, '_blank');
+  el.innerHTML=err?`<span class="err-txt">${err}</span>`:mins+' د';
+  return err?-1:mins;
 }
-</script>
 
+function calc(){
+  const bal=parseInt(document.getElementById('bal').value)||700;
+  let total=0,rows=[],hasErr=false;
+  document.getElementById('err').textContent='';
+  for(const i of ids){
+    if(!document.getElementById('d'+i))continue;
+    const m=chMins(i);
+    if(m===-1){hasErr=true;continue;}
+    total+=m;rows.push(i);
+  }
+  if(hasErr){document.getElementById('err').textContent='تحقق من الأوقات';return;}
+  if(!rows.length){document.getElementById('err').textContent='أضف يوماً أولاً';return;}
+
+  const rem=Math.max(0,bal-total);
+  document.getElementById('v-used').textContent=total;
+  document.getElementById('v-rem').textContent=bal-total;
+  document.getElementById('v-days').textContent=rows.length;
+  document.getElementById('sb-used').className='stat-box'+(total>bal?' bad':'');
+  document.getElementById('sb-rem').className='stat-box'+(bal-total<0?' bad':bal-total<60?' warn':' ok');
+
+  const ld=Math.floor(rem/180),lr=rem%180;
+  const ed=Math.floor(rem/240),er=rem%240;
+  document.getElementById('ml-days').textContent=ld+' يوم';
+  document.getElementById('ml-part').textContent=lr>0?toT(WS+lr)+' ('+lr+' د)':'—';
+  document.getElementById('me-days').textContent=ed+' يوم';
+  document.getElementById('me-part').textContent=er>0?toT(WE-er)+' ('+er+' د)':'—';
+
+  document.getElementById('out').style.display='block';
+}
+
+addDay();
+</script>
 </body>
 </html>

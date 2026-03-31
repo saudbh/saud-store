@@ -10,10 +10,14 @@
   .wrap{width:100%;max-width:600px}
   h1{font-size:20px;font-weight:600;color:#1a1a1a;margin-bottom:1.25rem;text-align:center}
   .card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
-  .row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-  .row label{font-size:14px;color:#666;min-width:130px}
-  select,input[type=time],input[type=number]{border:1px solid #d5d5d5;border-radius:8px;padding:6px 10px;font-size:14px;background:#fafafa;color:#1a1a1a;height:36px;font-family:inherit}
+  .row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .row:last-child{margin-bottom:0}
+  .row label{font-size:14px;color:#666;min-width:140px}
+  select,input[type=number],input[type=time]{border:1px solid #d5d5d5;border-radius:8px;padding:6px 10px;font-size:14px;background:#fafafa;color:#1a1a1a;height:36px;font-family:inherit}
   select:focus,input:focus{outline:2px solid #4f8ef7;border-color:transparent}
+  .bal-group{display:flex;gap:8px;align-items:center;flex:1}
+  .bal-group input{width:90px}
+  .bal-hint{font-size:12px;color:#aaa}
   .section-title{font-size:13px;font-weight:600;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
   .col-h{font-size:12px;color:#aaa;text-align:center}
   .day-row{display:grid;grid-template-columns:1fr 1fr 60px 28px;gap:8px;align-items:center;margin-bottom:8px}
@@ -39,7 +43,8 @@
   .max-box .line span:first-child{color:#888}
   .max-box .line span:last-child{color:#1a1a1a}
   #err{font-size:13px;color:#dc2626;margin-bottom:8px;text-align:center}
-  .info-bar{font-size:12px;color:#aaa;margin-top:6px}
+  .info-bar{font-size:12px;color:#aaa;margin-top:8px}
+  .divider{border:none;border-top:1px solid #f0f0f0;margin:10px 0}
   @media(max-width:480px){.max-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -49,10 +54,29 @@
 
   <div class="card">
     <div class="row">
-      <label>الرصيد (دقيقة)</label>
-      <input type="number" id="bal" value="700" min="0" style="width:90px">
+      <label>الرصيد الإجمالي (د)</label>
+      <div class="bal-group">
+        <input type="number" id="total-bal" value="700" min="0" oninput="updateRemaining()">
+        <span class="bal-hint">الإجمالي</span>
+      </div>
     </div>
     <div class="row">
+      <label>المستخدم مسبقاً (د)</label>
+      <div class="bal-group">
+        <input type="number" id="used-before" value="0" min="0" oninput="updateRemaining()">
+        <span class="bal-hint">دقيقة</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="row">
+      <label style="font-weight:600;color:#1a1a1a">الرصيد المتبقي (د)</label>
+      <div class="bal-group">
+        <input type="number" id="bal" value="700" min="0" style="background:#eef4ff;border-color:#93c5fd;font-weight:600;color:#1d4ed8">
+        <span class="bal-hint" id="bal-hours">= 11.7 ساعة</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="row" style="margin-bottom:0">
       <label>وقت الدوام</label>
       <select id="schedule" onchange="scheduleChanged()" style="flex:1">
         <option value="390,810">6:30 – 13:30</option>
@@ -68,7 +92,7 @@
   </div>
 
   <div class="card">
-    <div class="section-title">أيام الاستئذان</div>
+    <div class="section-title">أيام الاستئذان هذا الشهر <span style="font-weight:400;color:#aaa;font-size:12px">(اختياري)</span></div>
     <div style="display:grid;grid-template-columns:1fr 1fr 60px 28px;gap:8px;margin-bottom:6px">
       <div class="col-h">النوع</div>
       <div class="col-h">الوقت</div>
@@ -84,8 +108,8 @@
 
   <div id="out" style="display:none">
     <div class="stat">
-      <div class="stat-box" id="sb-used"><div class="n" id="v-used">0</div><div class="l">مستخدم</div></div>
-      <div class="stat-box" id="sb-rem"><div class="n" id="v-rem">0</div><div class="l">متبقي</div></div>
+      <div class="stat-box" id="sb-used"><div class="n" id="v-used">0</div><div class="l">مستخدم هذا الشهر</div></div>
+      <div class="stat-box" id="sb-rem"><div class="n" id="v-rem">0</div><div class="l">متبقي بعد الشهر</div></div>
       <div class="stat-box"><div class="n" id="v-days">0</div><div class="l">أيام</div></div>
     </div>
     <div class="max-grid">
@@ -112,11 +136,24 @@ let n=0, ids=[];
 function toM(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
 function toT(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
 
+function updateRemaining(){
+  const total=parseInt(document.getElementById('total-bal').value)||0;
+  const used=parseInt(document.getElementById('used-before').value)||0;
+  const rem=Math.max(0,total-used);
+  document.getElementById('bal').value=rem;
+  document.getElementById('bal-hours').textContent='= '+(rem/60).toFixed(1)+' ساعة';
+  document.getElementById('out').style.display='none';
+}
+
+document.getElementById('bal').addEventListener('input',function(){
+  document.getElementById('bal-hours').textContent='= '+((parseInt(this.value)||0)/60).toFixed(1)+' ساعة';
+  document.getElementById('out').style.display='none';
+});
+
 function scheduleChanged(){
   const val=document.getElementById('schedule').value.split(',').map(Number);
   WS=val[0]; WE=val[1];
-  ML=Math.round((WS+WE)/2);
-  EL=ML;
+  ML=Math.round((WS+WE)/2); EL=ML;
   const dur=((WE-WS)/60).toFixed(1).replace('.0','');
   document.getElementById('info-bar').textContent=
     'الدوام: '+toT(WS)+' – '+toT(WE)+
@@ -151,8 +188,7 @@ function del(i){
 
 function chType(i){
   const tp=document.getElementById('tp'+i).value;
-  const t=document.getElementById('t'+i);
-  t.value=tp==='late'?toT(WS+30):toT(WE-30);
+  document.getElementById('t'+i).value=tp==='late'?toT(WS+30):toT(WE-30);
   chMins(i);
 }
 
@@ -177,17 +213,18 @@ function chMins(i){
 }
 
 function calc(){
-  const bal=parseInt(document.getElementById('bal').value)||700;
-  let total=0,hasErr=false,count=0;
+  const bal=parseInt(document.getElementById('bal').value)||0;
+  let total=0, hasErr=false, count=0;
   document.getElementById('err').textContent='';
+
   for(const i of ids){
     if(!document.getElementById('d'+i)) continue;
     const m=chMins(i);
     if(m===-1){hasErr=true;continue;}
     total+=m; count++;
   }
+
   if(hasErr){document.getElementById('err').textContent='تحقق من الأوقات';return;}
-  if(!count){document.getElementById('err').textContent='أضف يوماً أولاً';return;}
 
   const rem=Math.max(0,bal-total);
   const maxLate=ML-WS;
@@ -214,7 +251,7 @@ function calc(){
 }
 
 scheduleChanged();
-addDay();
+updateRemaining();
 </script>
 </body>
 </html>

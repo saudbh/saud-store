@@ -244,7 +244,7 @@
 
     <div class="card">
       <div class="card-title">بيانات الاستثمار</div>
-      <div class="grid-2">
+      <div class="grid-3">
         <div class="field">
           <label for="invest-amount">المبلغ المستثمر (ر.س)</label>
           <input type="number" id="invest-amount" value="100000" min="0" step="1000">
@@ -252,6 +252,10 @@
         <div class="field">
           <label for="invest-rate">نسبة العائد السنوية (%)</label>
           <input type="number" id="invest-rate" value="10" min="0" max="200" step="0.1">
+        </div>
+        <div class="field">
+          <label for="invest-years">مدة الاستثمار (سنوات)</label>
+          <input type="number" id="invest-years" value="2" min="0.1" max="100" step="0.5">
         </div>
       </div>
     </div>
@@ -280,14 +284,14 @@
           <div class="stat-sub">ر.س (ربح شهري − القسط)</div>
         </div>
         <div class="stat">
-          <div class="stat-label">إجمالي الربح الشهري (المدة)</div>
+          <div class="stat-label">إجمالي الربح الشهري (مدة الاستثمار)</div>
           <div class="stat-val" id="monthly-profit-total">—</div>
-          <div class="stat-sub">ر.س (ربح شهري × عدد الأشهر)</div>
+          <div class="stat-sub">ر.س (ربح شهري × أشهر الاستثمار)</div>
         </div>
         <div class="stat">
           <div class="stat-label">عائد الاستثمار الإجمالي</div>
           <div class="stat-val" id="invest-return">—</div>
-          <div class="stat-sub">ر.س بنهاية المدة</div>
+          <div class="stat-sub" id="invest-return-sub">ر.س بنهاية مدة الاستثمار</div>
         </div>
         <div class="stat" style="grid-column: span 2;">
           <div class="stat-label">صافي الربح الإجمالي</div>
@@ -312,6 +316,8 @@
       const method = document.getElementById('method').value;
       const investAmount = parseFloat(document.getElementById('invest-amount').value) || 0;
       const investRate = parseFloat(document.getElementById('invest-rate').value) || 0;
+      const investYears = parseFloat(document.getElementById('invest-years').value) || 0;
+      const investMonths = investYears * 12;
       const r = annualRate / 100 / 12;
 
       let monthlyPayment, totalInterest;
@@ -324,12 +330,12 @@
       }
 
       const investMonthly = investAmount * (investRate / 100) / 12;
-      const years = n / 12;
-      const investFinalValue = investAmount * Math.pow(1 + investRate / 100, years);
-      const monthlyProfitTotal = investMonthly * n;
+      const investFinalValue = investAmount * Math.pow(1 + investRate / 100, investYears);
+      const monthlyProfitTotal = investMonthly * investMonths;
       const netMonthly = investMonthly - monthlyPayment;
       const investProfit = (investFinalValue - investAmount) + monthlyProfitTotal - totalInterest;
 
+      document.getElementById('invest-return-sub').textContent = `ر.س بنهاية ${investYears} سنة`;
       document.getElementById('monthly-payment').textContent = fmt(monthlyPayment);
       document.getElementById('total-interest').textContent = fmt(totalInterest);
       document.getElementById('invest-monthly').textContent = fmt(investMonthly);
@@ -354,7 +360,7 @@
       }
     }
 
-    ['amount','months','rate','method','invest-amount','invest-rate'].forEach(id => {
+    ['amount','months','rate','method','invest-amount','invest-rate','invest-years'].forEach(id => {
       document.getElementById(id).addEventListener('input', render);
       document.getElementById(id).addEventListener('change', render);
     });

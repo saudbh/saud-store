@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام الطيبات — د. ضياء العوضي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-light: #EAF3DE;
+    --green-mid: #639922;
+    --green-dark: #3B6D11;
+    --red-light: #FCEBEB;
+    --red-mid: #E24B4A;
+    --red-dark: #A32D2D;
+    --blue-light: #E6F1FB;
+    --blue-mid: #378ADD;
+    --blue-dark: #185FA5;
+    --amber-light: #FAEEDA;
+    --amber-dark: #633806;
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+    --text: #1a1a18;
+    --text-muted: #6b6b66;
+    --text-hint: #9b9b94;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-header .logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--green-light);
+    border: 2px solid var(--green-mid);
+    margin-bottom: 1rem;
+    font-size: 26px;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .page-header p {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 8px 20px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-strong);
+    font-size: 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text-muted);
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tab:hover { background: var(--bg); }
+
+  .tab.active-allowed { background: var(--green-light); color: var(--green-dark); border-color: var(--green-mid); }
+  .tab.active-forbidden { background: var(--red-light); color: var(--red-dark); border-color: var(--red-mid); }
+  .tab.active-rules { background: var(--blue-light); color: var(--blue-dark); border-color: var(--blue-mid); }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+
+  /* ADD FORM */
+  .add-form {
+    padding: 1.25rem 1.5rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .add-form h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 130px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  select, input[type="text"] {
+    border-radius: var(--radius);
+    border: 1px solid var(--border-strong);
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: 'Tajawal', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  select:focus, input[type="text"]:focus {
+    border-color: var(--green-mid);
+    box-shadow: 0 0 0 3px rgba(99,153,34,0.1);
+  }
+
+  .btn-add {
+    padding: 9px 22px;
+    border-radius: var(--radius);
+    border: none;
+    font-size: 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-add-green { background: var(--green-dark); color: #fff; }
+  .btn-add-green:hover { background: var(--green-mid); }
+  .btn-add-red { background: var(--red-dark); color: #fff; }
+  .btn-add-red:hover { background: var(--red-mid); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-hint);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  tbody tr { transition: background 0.12s; }
+  tbody tr:hover td { background: var(--bg); }
+
+  tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .badge-green { background: var(--green-light); color: var(--green-dark); }
+  .badge-red { background: var(--red-light); color: var(--red-dark); }
+
+  .note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  .custom-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--blue-light);
+    color: var(--blue-dark);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .btn-delete {
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: var(--text-hint);
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 0.15s;
+  }
+
+  .btn-delete:hover {
+    background: var(--red-light);
+    color: var(--red-dark);
+    border-color: var(--red-mid);
+  }
+
+  .hidden { display: none; }
+
+  /* RULES */
+  .rule-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rule-row:last-child { border-bottom: none; }
+
+  .rule-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--blue-light);
+    color: var(--blue-dark);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .rule-text { font-size: 15px; line-height: 1.6; padding-top: 2px; }
+  .rule-text strong { color: var(--green-dark); font-weight: 700; }
+
+  /* WARNING */
+  .warning {
+    background: var(--amber-light);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-top: 1.25rem;
+    font-size: 13px;
+    color: var(--amber-dark);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.6;
+    border: 1px solid rgba(186,117,23,0.2);
+  }
+
+  .warning-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--text);
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-family: 'Tajawal', sans-serif;
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (max-width: 560px) {
+    .form-row { flex-direction: column; }
+    .btn-add { width: 100%; justify-content: center; }
+    .page-header h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <div class="page-header">
+    <div class="logo">🌿</div>
+    <h1>نظام الطيبات</h1>
+    <p>د. ضياء العوضي — قائمة الأطعمة المسموحة والممنوعة</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active-allowed" id="tab-allowed" onclick="show('allowed', this, 'active-allowed')">
+      ✅ المسموحات
+    </button>
+    <button class="tab" id="tab-forbidden" onclick="show('forbidden', this, 'active-forbidden')">
+      ❌ الممنوعات
+    </button>
+    <button class="tab" id="tab-rules" onclick="show('rules', this, 'active-rules')">
+      📋 القواعد
+    </button>
+  </div>
+
+  <!-- ALLOWED -->
+  <div id="allowed">
+    <div class="card">
+      <div class="add-form">
+        <h3>➕ إضافة صنف مسموح</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>التصنيف</label>
+            <select id="a-cat">
+              <option value="🥩 بروتينات">🥩 بروتينات</option>
+              <option value="🧀 أجبان">🧀 أجبان</option>
+              <option value="🍚 نشويات">🍚 نشويات</option>
+              <option value="🫒 دهون وزيوت">🫒 دهون وزيوت</option>
+              <option value="🥦 خضروات مطبوخة">🥦 خضروات مطبوخة</option>
+              <option value="🍬 حلويات">🍬 حلويات</option>
+              <option value="🧴 إضافات">🧴 إضافات</option>
+              <option value="➕ أخرى">➕ أخرى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>اسم الصنف</label>
+            <input type="text" id="a-name" placeholder="مثال: لحم غزال" />
+          </div>
+          <div class="form-group" style="max-width:180px">
+            <label>ملاحظة (اختياري)</label>
+            <input type="text" id="a-note" placeholder="مثال: مشوي فقط" />
+          </div>
+          <button class="btn-add btn-add-green" onclick="addItem('allowed')">إضافة</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:26%">التصنيف</th>
+            <th>الأطعمة المسموحة</th>
+            <th style="width:44px"></th>
+          </tr>
+        </thead>
+        <tbody id="allowed-body">
+          <tr>
+            <td><span class="badge badge-green">🥩 بروتينات</span></td>
+            <td>لحم بقري (كندوز / ضاني / عجل)، كبدة، قلوب، كوارع، لحمة الرأس، ممبار، عكاوي<p class="note">جميع أنواع الأسماك البحرية — يفضل المشوي</p></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">🧀 أجبان</span></td>
+            <td>شيدر، رومي، غودا، فلمنك، موتزاريلا، برميزان، ريكفور، جبن مطبوخ</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">🍚 نشويات</span></td>
+            <td>أرز (جميع أنواعه)، بطاطس (مقلية / مسلوقة / مطبوخة)، خبز قمح كامل محمص، خبز ذرة</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">🫒 دهون وزيوت</span></td>
+            <td>زيت زيتون (الأفضل)، زيت ذرة، زيت دوار الشمس، زبدة، سمن، قشدة</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">🥦 خضروات مطبوخة</span></td>
+            <td>باذنجان، فلفل، قلقاس، قرنبيط، بطاطا حلوة، جزر مطبوخ، كوسة مطبوخة، طماطم مطبوخة، بصل مطبوخ</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">🍬 حلويات</span></td>
+            <td>كنافة بالجبن المسموح، أرز بالحليب بالبدائل المسموحة</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">🧴 إضافات</span></td>
+            <td>خل القصب، ملح، بهارات طبيعية، ليمون</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FORBIDDEN -->
+  <div id="forbidden" class="hidden">
+    <div class="card">
+      <div class="add-form">
+        <h3>➕ إضافة صنف ممنوع</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>التصنيف</label>
+            <select id="f-cat">
+              <option value="🐔 دواجن وبيض">🐔 دواجن وبيض</option>
+              <option value="🥛 ألبان سائلة">🥛 ألبان سائلة</option>
+              <option value="🥜 بقوليات">🥜 بقوليات</option>
+              <option value="🥗 خضروات نيئة">🥗 خضروات نيئة وورقية</option>
+              <option value="🧈 زيوت ممنوعة">🧈 زيوت ممنوعة</option>
+              <option value="🍞 مخبوزات صناعية">🍞 مخبوزات صناعية</option>
+              <option value="🥤 مشروبات">🥤 مشروبات</option>
+              <option value="➕ أخرى">➕ أخرى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>اسم الصنف</label>
+            <input type="text" id="f-name" placeholder="مثال: عصير معلب" />
+          </div>
+          <div class="form-group" style="max-width:180px">
+            <label>ملاحظة (اختياري)</label>
+            <input type="text" id="f-note" placeholder="مثال: يسبب التهاب" />
+          </div>
+          <button class="btn-add btn-add-red" onclick="addItem('forbidden')">إضافة</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:26%">التصنيف</th>
+            <th>الأطعمة الممنوعة</th>
+            <th style="width:44px"></th>
+          </tr>
+        </thead>
+        <tbody id="forbidden-body">
+          <tr>
+            <td><span class="badge badge-red">🐔 دواجن وبيض</span></td>
+            <td>الدجاج بجميع أنواعه، البيض بجميع أشكاله</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">🥛 ألبان سائلة</span></td>
+            <td>حليب سائل، لبن زبادي، قشطة سائلة</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">🥜 بقوليات</span></td>
+            <td>عدس، فول، حمص، فاصوليا، فول سوداني، بازلاء</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">🥗 خضروات نيئة</span></td>
+            <td>خس، جرجير، سبانخ، ملوخية نيئة، وجميع الخضروات النيئة والورقية</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">🧈 زيوت ممنوعة</span></td>
+            <td>زيت نخيل، سمن نباتي، الزيوت النباتية المهدرجة</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">🍞 مخبوزات صناعية</span></td>
+            <td>دقيق أبيض مكرر، خبز بالخميرة الفورية والمحسنات</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">🥤 مشروبات</span></td>
+            <td>المشروبات الغازية، العصائر الصناعية</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div id="rules" class="hidden">
+    <div class="card">
+      <div class="rule-row">
+        <span class="rule-num">1</span>
+        <span class="rule-text">تناول الطعام عند <strong>الجوع الحقيقي</strong> فقط، ولا تأكل حتى الشبع التام</span>
+      </div>
+      <div class="rule-row">
+        <span class="rule-num">2</span>
+        <span class="rule-text">البروتين (لحم / سمك) يُتناول <strong>يوماً بعد يوم</strong> — لا يومياً</span>
+      </div>
+      <div class="rule-row">
+        <span class="rule-num">3</span>
+        <span class="rule-text">الخضروات <strong>مطبوخة دائماً</strong> — لا نيئة ولا ورقية</span>
+      </div>
+      <div class="rule-row">
+        <span class="rule-num">4</span>
+        <span class="rule-text">الخبز <strong>محمص دائماً</strong> (توست) لإزالة أثر الخميرة</span>
+      </div>
+      <div class="rule-row">
+        <span class="rule-num">5</span>
+        <span class="rule-text">إضافة <strong>خل القصب</strong> للوجبات بانتظام</span>
+      </div>
+      <div class="rule-row">
+        <span class="rule-num">6</span>
+        <span class="rule-text">اختر أطعمة <strong>تشبع أكثر وتترك فضلات أقل</strong> — الطعام القريب من القوام السائل أفضل للهضم</span>
+      </div>
+    </div>
+
+    <div class="warning">
+      <span class="warning-icon">⚠️</span>
+      <span>هذا النظام مثير للجدل ولم يحظَ باعتراف علمي رسمي. استشر طبيبك أو أخصائي تغذية معتمد قبل اتباعه، خاصة إن كنت تعاني من أمراض مزمنة كالسكري أو أمراض الكلى.</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function show(id, btn, activeClass) {
+    ['allowed','forbidden','rules'].forEach(s => document.getElementById(s).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('.tab').forEach(t => { t.className = 'tab'; });
+    btn.classList.add(activeClass);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function addItem(type) {
+    const catId = type === 'allowed' ? 'a-cat' : 'f-cat';
+    const nameId = type === 'allowed' ? 'a-name' : 'f-name';
+    const noteId = type === 'allowed' ? 'a-note' : 'f-note';
+    const bodyId = type === 'allowed' ? 'allowed-body' : 'forbidden-body';
+    const badgeClass = type === 'allowed' ? 'badge-green' : 'badge-red';
+
+    const cat = document.getElementById(catId).value.trim();
+    const name = document.getElementById(nameId).value.trim();
+    const note = document.getElementById(noteId).value.trim();
+
+    if (!name) { showToast('يرجى كتابة اسم الصنف'); return; }
+
+    const tbody = document.getElementById(bodyId);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="badge ${badgeClass}">${cat}</span></td>
+      <td>
+        ${name}
+        <span class="custom-tag">مضاف</span>
+        ${note ? `<p class="note">${note}</p>` : ''}
+      </td>
+      <td>
+        <button class="btn-delete" onclick="this.closest('tr').remove(); showToast('تم الحذف ✓')" title="حذف">🗑</button>
+      </td>`;
+    tbody.appendChild(tr);
+
+    document.getElementById(nameId).value = '';
+    document.getElementById(noteId).value = '';
+    showToast('تمت الإضافة بنجاح ✓');
+  }
+
+  document.getElementById('a-name').addEventListener('keydown', e => { if(e.key==='Enter') addItem('allowed'); });
+  document.getElementById('f-name').addEventListener('keydown', e => { if(e.key==='Enter') addItem('forbidden'); });
+</script>
+</body>
+</html>
